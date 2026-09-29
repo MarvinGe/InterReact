@@ -5,6 +5,7 @@ namespace InterReact;
 public interface IInterReactClient : IAsyncDisposable
 {
     IPEndPoint RemoteIpEndPoint { get; }
+    bool IsConnected { get; }
     Request Request { get; }
     IObservable<object> Response { get; }
     Service Service { get; }
@@ -13,6 +14,7 @@ public interface IInterReactClient : IAsyncDisposable
 file sealed class NullInterReactClient : IInterReactClient
 {
     public IPEndPoint RemoteIpEndPoint => throw new InvalidOperationException();
+    public bool IsConnected => false;
     public Request Request => throw new InvalidOperationException();
     public IObservable<object> Response => throw new InvalidOperationException();
     public Service Service => throw new InvalidOperationException();
@@ -24,6 +26,7 @@ public sealed class InterReactClient(
 {
     public static IInterReactClient NullInstance { get; } = new NullInterReactClient();
     public IPEndPoint RemoteIpEndPoint => connection.RemoteEndPoint;
+    public bool IsConnected => connection.IsConnected;
     public Request Request { get; } = request;
     public IObservable<object> Response { get; } = response;
     public Service Service { get; } = service;

@@ -32,6 +32,19 @@ public sealed class Connection : IAsyncDisposable
     internal IPEndPoint RemoteEndPoint { get; }
     internal IObservable<string[]> Observable { get; }
 
+    /// <summary>
+    /// False once this connection can no longer carry requests: disposed, cancelled, or one of the two
+    /// loops has ended. The receiver loop also ends when TWS/Gateway closes the socket, and neither loop
+    /// reports that to the caller, so a request sent afterwards is silently dropped or throws.
+    /// The receiver loop starts with the first subscription to <see cref="Observable"/>, so a connection
+    /// nobody has subscribed to yet counts as connected.
+    /// </summary>
+    public bool IsConnected =>
+        _disposed == 0
+        && !_ct.IsCancellationRequested
+        && !_senderTask.IsCompleted
+        && _receiverTask is not { IsCompleted: true };
+
     internal Connection(Socket socket, InterReactOptions options, ILogger logger, CancellationToken ct)
     {
         _socket = socket;
@@ -132,6 +145,13 @@ public sealed class Connection : IAsyncDisposable
         catch (OperationCanceledException e) when (_ct.IsCancellationRequested)
         {
             throw new TimeoutException("Timeout waiting for response from TWS/Gateway. Try restarting.", e);
+        }
+        finally
+        {
+            // _cts is the connection-wide token source, so the timer above must be disarmed again.
+            // Otherwise it cancels _ct three seconds after login: the receiver loop stops and every
+            // later request fails when writing to the outgoing channel.
+            _cts.CancelAfter(Timeout.InfiniteTimeSpan);
         }
     }
 
