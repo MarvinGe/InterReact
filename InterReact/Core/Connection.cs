@@ -133,6 +133,13 @@ public sealed class Connection : IAsyncDisposable
         {
             throw new TimeoutException("Timeout waiting for response from TWS/Gateway. Try restarting.", e);
         }
+        finally
+        {
+            // _cts is the connection-wide token source, so the timer above has to be disarmed again.
+            // Otherwise it cancels _ct three seconds after login: the receiver loop stops and every
+            // later request fails when writing to the outgoing channel.
+            _cts.CancelAfter(Timeout.InfiniteTimeSpan);
+        }
     }
 
     internal IObservable<string[]> CreateObservable()
