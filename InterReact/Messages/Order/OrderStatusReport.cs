@@ -30,7 +30,7 @@ public sealed record OrderStatusReport : IHasOrderId
     /// <summary>
     /// The TWS id used to identify orders. Remains the same over TWS sessions.
     /// </summary>
-    public int PermanentId { get; }
+    public long PermanentId { get; }
 
     /// <summary>
     /// The order ID of the parent order, used for bracket and auto trailing stop orders.
@@ -65,7 +65,7 @@ public sealed record OrderStatusReport : IHasOrderId
         Filled = r.ReadDecimal();
         Remaining = r.ReadDecimal();
         AverageFillPrice = r.ReadDouble();
-        PermanentId = r.ReadInt();
+        PermanentId = r.ReadLong();
         ParentId = r.ReadInt();
         LastFillPrice = r.ReadDouble();
         ClientId = r.ReadInt();

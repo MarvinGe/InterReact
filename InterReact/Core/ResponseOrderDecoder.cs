@@ -43,7 +43,7 @@ internal sealed class OrderDecoder
     internal void ReadOrigin() => Order.Origin = R.ReadEnum<OrderOrigin>();
     internal void ReadOrderRef() => Order.OrderRef = R.ReadString();
     internal void ReadClientId() => Order.ClientId = R.ReadInt();
-    internal void ReadPermId() => Order.PermanentId = R.ReadInt();
+    internal void ReadPermId() => Order.PermanentId = R.ReadLong();
     internal void ReadOutsideRth() => Order.OutsideRegularTradingHours = R.ReadBool();
     internal void ReadHidden() => Order.Hidden = R.ReadInt() == 1;
     internal void ReadDiscretionaryAmount() => Order.DiscretionaryAmount = R.ReadDouble();

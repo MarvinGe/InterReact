@@ -50,7 +50,7 @@ public sealed record Execution : IHasRequestId, IHasOrderId, IHasExecutionId
     /// <summary>
     /// The TWS id used to identify orders, which remains the same over TWS sessions.
     /// </summary>
-    public int PermanentId { get; init; }
+    public long PermanentId { get; init; }
 
     /// <summary>
     /// Identifies the position as one to be liquidated last should the need arise.
@@ -93,7 +93,7 @@ public sealed record Execution : IHasRequestId, IHasOrderId, IHasExecutionId
         Side = r.ReadString();
         Shares = r.ReadDecimal();
         Price = r.ReadDouble();
-        PermanentId = r.ReadInt();
+        PermanentId = r.ReadLong();
         ClientId = r.ReadInt();
         Liquidation = r.ReadInt();
         CumulativeQuantity = r.ReadDecimal();

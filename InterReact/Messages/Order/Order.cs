@@ -16,7 +16,7 @@ public sealed record Order : IHasOrderId  // input + output
     /// </summary>
     public int ClientId { get; set; } // output
 
-    public int PermanentId { get; set; } // output
+    public long PermanentId { get; set; } // output
 
     // Primary attributes
 
