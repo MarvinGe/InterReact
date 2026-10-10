@@ -128,7 +128,10 @@ public sealed class Connection : IAsyncDisposable
             throw new InvalidDataException($"Could not parse server version '{firstMessage[0]}'.");
         _options.ServerVersionCurrent = version;
         if (_options.ServerVersionCurrent < _options.ServerVersionMin || _options.ServerVersionCurrent > _options.ServerVersionMax)
-            throw new InvalidDataException($"Invalid server version '{_options.ServerVersionCurrent}'.");
+            throw new InvalidDataException(
+                $"TWS/Gateway negotiated server version {(int)_options.ServerVersionCurrent}, which is outside " +
+                $"the range supported by this library: {(int)_options.ServerVersionMin}..{(int)_options.ServerVersionMax}. " +
+                "TWS/Gateway no longer supports that range.");
         // The rest of the message is ignored and contains the date, time and timezone.
 
         _logger.LogInformation("Logged into TWS/Gateway version {ServerVersionCurrent} with ClientId {ClientId}.",
